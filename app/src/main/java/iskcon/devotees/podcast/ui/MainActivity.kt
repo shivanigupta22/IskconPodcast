@@ -1,7 +1,8 @@
-package iskocn.devotees.iskconpodcast
+package iskcon.devotees.podcast.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import iskcon.devotees.podcast.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
