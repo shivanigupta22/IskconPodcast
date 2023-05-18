@@ -1,0 +1,22 @@
+{
+  "media": [
+    {
+      "id": "audio_01",
+      "title": "Hari_Haraye_Namah_Krsna_-_Nama-sankirtana",
+      "source": "https://audio.iskcondesiretree.com/01_-_Srila_Prabhupada/02_-_Bhajans/Vol-01/03_-_Songs_of_the_Spiritual_Masters/SP_Bhajans_01_-_Hari_Haraye_Namah_Krsna_-_Nama-sankirtana.mp3",
+      "album": "Audio without lyrics",
+      "artist": "Srila Prabhupada",
+      "genre": "Audio",
+      "image": "https://iskcontirupati.info/wp-content/uploads/2021/02/Srila-Prabhupada.png"
+    },
+    {
+      "id": "audio_02",
+      "title": "Cintamani_-_Sri_Brahma-samhita",
+      "source": "https://audio.iskcondesiretree.com/01_-_Srila_Prabhupada/02_-_Bhajans/Vol-01/03_-_Songs_of_the_Spiritual_Masters/SP_Bhajans_01_-_Cintamani_-_Sri_Brahma-samhita.mp3",
+      "album": "Audio without lyrics",
+      "artist": "Srila Prabhupada",
+      "genre": "Audio",
+      "image": "https://iskcontirupati.info/wp-content/uploads/2021/02/Srila-Prabhupada.png"
+    }
+  ]
+}

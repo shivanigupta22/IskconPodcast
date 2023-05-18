@@ -1,13 +1,15 @@
 package iskcon.devotees.podcast.ui.media3
 
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
+import android.content.Intent
 import androidx.media3.common.AudioAttributes
-import androidx.media3.common.MimeTypes
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import iskcon.devotees.podcast.R
+import iskcon.devotees.podcast.ui.model.MediaContent
 
-class PlaybackService : MediaSessionService() {
+class PlaybackService : MediaSessionService(), MediaSession.Callback {
     private var mediaSession: MediaSession? = null
     private var exoPlayer: ExoPlayer? = null
 
@@ -17,20 +19,30 @@ class PlaybackService : MediaSessionService() {
     }
 
     private fun initializePlayer() {
+        MediaContent.initialize(assets)
         exoPlayer =
             ExoPlayer.Builder(this)
                 .setAudioAttributes(AudioAttributes.DEFAULT, true).build().also {
-                    it.addMediaItemList(
-                        arrayListOf(
-                            createMediaItem(
-                                getString(R.string.media_url_mp3),
-                                MimeTypes.AUDIO_MP4
-                            ), createMediaItem(getString(R.string.media_url_mp3_2))
-                        )
-                    )
+                    it.addMediaItemList(MediaContent.mediaContentList)
                 }
+        val sessionActivityPendingIntent =
+            TaskStackBuilder.create(this).run {
+                addNextIntent(Intent(this@PlaybackService, Media3Activity::class.java))
+                getPendingIntent(
+                    0,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            }
         exoPlayer?.let {
-            mediaSession = MediaSession.Builder(this, it).build()
+            //to add media using controller ----
+            //implement media session in service
+            //add callback for media session
+            // add media using controller method
+            // override onAddMediaItems or onSetMediaItems methods in service
+            // mediaSession = MediaSession.Builder(this, it).setCallback(this).build()
+            mediaSession =
+                MediaSession.Builder(this, it).setSessionActivity(sessionActivityPendingIntent)
+                    .build()
         }
     }
 
@@ -40,14 +52,25 @@ class PlaybackService : MediaSessionService() {
     }
 
     private fun releasePlayer() {
+        exoPlayer?.release()
+        exoPlayer = null
         mediaSession?.run {
             player.release()
             release()
             mediaSession = null
         }
-        exoPlayer = null
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
         mediaSession
+//
+//    override fun onAddMediaItems(
+//        mediaSession: MediaSession,
+//        controller: MediaSession.ControllerInfo,
+//        mediaItems: MutableList<MediaItem>
+//    ): ListenableFuture<MutableList<MediaItem>> {
+//        val updatedMediaItems =
+//            mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
+//        return Futures.immediateFuture(updatedMediaItems)
+//    }
 }

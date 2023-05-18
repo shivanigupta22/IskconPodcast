@@ -2,11 +2,14 @@ package iskcon.devotees.podcast.ui.media3
 
 import android.content.ComponentName
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player.*
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
@@ -17,6 +20,10 @@ class Media3Activity : AppCompatActivity() {
     private val viewBinding by lazy {
         ActivityMedia3Binding.inflate(layoutInflater)
     }
+
+    //A Future that accepts completion listeners. Each listener has an associated executor,
+    // and it is invoked using this executor once the future's computation is complete.
+    // If the computation has already completed when the listener is added, the listener will execute immediately.
     private lateinit var controllerFuture: ListenableFuture<MediaController>
     private val controller: MediaController?
         get() =
@@ -32,8 +39,14 @@ class Media3Activity : AppCompatActivity() {
         initializeController()
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewBinding.videoView.onPause()
+    }
+
     override fun onResume() {
         super.onResume()
+        viewBinding.videoView.onResume()
         hideSystemUI()
     }
 
@@ -43,15 +56,78 @@ class Media3Activity : AppCompatActivity() {
     }
 
     private fun initializeController() {
+        //building controller is an async process hence returning a listenable future
         controllerFuture = MediaController.Builder(
             this,
             SessionToken(this, ComponentName(this, PlaybackService::class.java))
         ).buildAsync()
         controllerFuture.addListener(
             {
-                viewBinding.videoView.player = this.controller
+                viewBinding.videoView.player = controller
+                controller?.playWhenReady = true
+                controller?.addListener(object : Listener {
+
+                    override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                        super.onMediaMetadataChanged(mediaMetadata)
+                        log(mediaMetadata.toString())
+                    }
+
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        super.onIsPlayingChanged(isPlaying)
+                        log("onIsPlayingChanged=$isPlaying")
+                    }
+
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        super.onPlaybackStateChanged(playbackState)
+                        log("onPlaybackStateChanged=${getStateName(playbackState)}")
+                    }
+
+                    override fun onPlayerError(error: PlaybackException) {
+                        super.onPlayerError(error)
+                        log("onPlayerError=${error.stackTraceToString()}")
+                    }
+
+                    override fun onPlayerErrorChanged(error: PlaybackException?) {
+                        super.onPlayerErrorChanged(error)
+                        log("onPlayerErrorChanged=${error?.stackTraceToString()}")
+                    }
+                })
+                log("start=${getStateName(controller?.playbackState)}")
+                log("COMMAND_PREPARE=${controller?.isCommandAvailable(COMMAND_PREPARE)}")
+                log("COMMAND_SET_MEDIA_ITEM=${controller?.isCommandAvailable(COMMAND_SET_MEDIA_ITEM)}")
+                log("COMMAND_PLAY_PAUSE=${controller?.isCommandAvailable(COMMAND_PLAY_PAUSE)}")
+                play()
             }, MoreExecutors.directExecutor()
         )
+
+    }
+
+    private fun play() {
+//        controller?.setMediaItems(
+//            arrayListOf(
+//                createMediaItem(
+//                    getString(R.string.media_url_mp3),
+//                    MimeTypes.AUDIO_MP4
+//                ), createMediaItem(getString(R.string.media_url_mp3_2))
+//            )
+//        )
+        controller?.prepare()
+        controller?.play()
+        log("after=${getStateName(controller?.playbackState)}")
+    }
+
+    private fun getStateName(i: Int?): String? {
+        return when (i) {
+            1 -> "STATE_IDLE"
+            2 -> "STATE_BUFFERING"
+            3 -> "STATE_READY"
+            4 -> "STATE_ENDED"
+            else -> null
+        }
+    }
+
+    private fun log(mediaMetadata: String) {
+        Log.e("Media 3", "onMediaMetadataChanged=$mediaMetadata")
     }
 
     private fun hideSystemUI() {
