@@ -103,14 +103,6 @@ class Media3Activity : AppCompatActivity() {
     }
 
     private fun play() {
-//        controller?.setMediaItems(
-//            arrayListOf(
-//                createMediaItem(
-//                    getString(R.string.media_url_mp3),
-//                    MimeTypes.AUDIO_MP4
-//                ), createMediaItem(getString(R.string.media_url_mp3_2))
-//            )
-//        )
         controller?.prepare()
         controller?.play()
         log("after=${getStateName(controller?.playbackState)}")

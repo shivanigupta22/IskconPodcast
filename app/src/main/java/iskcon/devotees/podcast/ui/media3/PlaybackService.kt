@@ -19,7 +19,6 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
     }
 
     private fun initializePlayer() {
-        MediaContent.initialize(assets)
         exoPlayer =
             ExoPlayer.Builder(this)
                 .setAudioAttributes(AudioAttributes.DEFAULT, true).build().also {
@@ -34,12 +33,6 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
                 )
             }
         exoPlayer?.let {
-            //to add media using controller ----
-            //implement media session in service
-            //add callback for media session
-            // add media using controller method
-            // override onAddMediaItems or onSetMediaItems methods in service
-            // mediaSession = MediaSession.Builder(this, it).setCallback(this).build()
             mediaSession =
                 MediaSession.Builder(this, it).setSessionActivity(sessionActivityPendingIntent)
                     .build()
@@ -63,14 +56,4 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
         mediaSession
-//
-//    override fun onAddMediaItems(
-//        mediaSession: MediaSession,
-//        controller: MediaSession.ControllerInfo,
-//        mediaItems: MutableList<MediaItem>
-//    ): ListenableFuture<MutableList<MediaItem>> {
-//        val updatedMediaItems =
-//            mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
-//        return Futures.immediateFuture(updatedMediaItems)
-//    }
 }
