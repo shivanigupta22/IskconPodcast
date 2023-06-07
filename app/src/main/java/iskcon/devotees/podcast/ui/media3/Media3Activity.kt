@@ -96,16 +96,9 @@ class Media3Activity : AppCompatActivity() {
                 log("COMMAND_PREPARE=${controller?.isCommandAvailable(COMMAND_PREPARE)}")
                 log("COMMAND_SET_MEDIA_ITEM=${controller?.isCommandAvailable(COMMAND_SET_MEDIA_ITEM)}")
                 log("COMMAND_PLAY_PAUSE=${controller?.isCommandAvailable(COMMAND_PLAY_PAUSE)}")
-                play()
+                log("after=${getStateName(controller?.playbackState)}")
             }, MoreExecutors.directExecutor()
         )
-
-    }
-
-    private fun play() {
-        controller?.prepare()
-        controller?.play()
-        log("after=${getStateName(controller?.playbackState)}")
     }
 
     private fun getStateName(i: Int?): String? {

@@ -3,6 +3,7 @@ package iskcon.devotees.podcast.ui.model
 import android.content.res.AssetManager
 import android.net.Uri
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaItem.RequestMetadata
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.Util
 import org.json.JSONObject
@@ -20,7 +21,6 @@ object MediaContent {
         val jsonObject = JSONObject(loadJSONFromAsset(assets))
         val mediaList = jsonObject.getJSONArray("media")
 
-        // create subfolder with same artist, album, etc.
         for (i in 0 until mediaList.length()) {
             addMediaToMediaContent(mediaList.getJSONObject(i))
         }
@@ -85,10 +85,13 @@ object MediaContent {
                 .setArtworkUri(imageUri)
                 .build()
 
+        val requestMetadata = RequestMetadata.Builder().setMediaUri(sourceUri).build()
+
         return MediaItem.Builder()
             .setMediaId(mediaId)
             .setSubtitleConfigurations(subtitleConfigurations)
             .setMediaMetadata(metadata)
+            .setRequestMetadata(requestMetadata)
             .setUri(sourceUri)
             .build()
     }

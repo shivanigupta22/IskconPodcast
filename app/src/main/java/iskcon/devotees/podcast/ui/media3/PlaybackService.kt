@@ -3,11 +3,14 @@ package iskcon.devotees.podcast.ui.media3
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.util.Log
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import iskcon.devotees.podcast.ui.model.MediaContent
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 
 class PlaybackService : MediaSessionService(), MediaSession.Callback {
     private var mediaSession: MediaSession? = null
@@ -21,9 +24,7 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
     private fun initializePlayer() {
         exoPlayer =
             ExoPlayer.Builder(this)
-                .setAudioAttributes(AudioAttributes.DEFAULT, true).build().also {
-                    it.addMediaItemList(MediaContent.mediaContentList)
-                }
+                .setAudioAttributes(AudioAttributes.DEFAULT, true).build()
         val sessionActivityPendingIntent =
             TaskStackBuilder.create(this).run {
                 addNextIntent(Intent(this@PlaybackService, Media3Activity::class.java))
@@ -35,6 +36,7 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
         exoPlayer?.let {
             mediaSession =
                 MediaSession.Builder(this, it).setSessionActivity(sessionActivityPendingIntent)
+                    .setCallback(this)
                     .build()
         }
     }
@@ -52,6 +54,19 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
             release()
             mediaSession = null
         }
+    }
+
+    override fun onAddMediaItems(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        mediaItems: MutableList<MediaItem>
+    ): ListenableFuture<MutableList<MediaItem>> {
+        val updatedMediaItems =
+            mediaItems.map {
+                Log.e("service ", "${it.requestMetadata.mediaUri}")
+                it.buildUpon().setUri(it.requestMetadata.mediaUri).build()
+            }.toMutableList()
+        return Futures.immediateFuture(updatedMediaItems)
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =

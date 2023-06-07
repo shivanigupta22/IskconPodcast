@@ -1,5 +1,6 @@
 package iskcon.devotees.podcast.ui
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,14 +21,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.media3.common.MediaItem
+import androidx.media3.session.MediaBrowser
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
 import iskcon.devotees.podcast.ui.media3.Media3Activity
+import iskcon.devotees.podcast.ui.media3.PlaybackService
 import iskcon.devotees.podcast.ui.model.MediaContent
 import iskcon.devotees.podcast.ui.theme.AppTheme
 import iskcon.devotees.podcast.ui.utils.listSubTitleWithTextStyle
 import iskcon.devotees.podcast.ui.utils.listTitleWithTextStyle
 
 class MainActivity : ComponentActivity() {
+    private lateinit var browserFuture: ListenableFuture<MediaBrowser>
+    private val browser: MediaBrowser?
+        get() =
+            if (browserFuture.isDone) browserFuture.get() else null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MediaContent.initialize(assets)
@@ -36,15 +47,59 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun initializeMediaBrowser() {
+        browserFuture = MediaBrowser.Builder(
+            this,
+            SessionToken(this, ComponentName(this, PlaybackService::class.java))
+        ).buildAsync()
+//        browserFuture.addListener({
+//            //  this.browser?.setMediaItems(MediaContent.mediaContentList)
+//        }, MoreExecutors.directExecutor())
+
+    }
+
+    private fun releaseBrowser() {
+        MediaBrowser.releaseFuture(browserFuture)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        initializeMediaBrowser()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        releaseBrowser()
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ScreenView() {
         AppTheme {
-            Surface(
-                color = MaterialTheme.colorScheme.background,
-                modifier = Modifier.padding(horizontal = 16.dp)
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(text = "Srila Prabhupada Bhajan Collections", fontSize = 18.sp)
+                        },
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            titleContentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    )
+                }
             ) {
-                DrawList()
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = it.calculateTopPadding()
+                    )
+                ) {
+                    DrawList()
+                }
             }
+
         }
     }
 
@@ -55,8 +110,6 @@ class MainActivity : ComponentActivity() {
                 ListItem(item)
             }
         }
-
-
     }
 
     @Composable
@@ -71,6 +124,12 @@ class MainActivity : ComponentActivity() {
         ) {
             Row(modifier = Modifier
                 .clickable {
+                    val browser = browser ?: return@clickable
+                    browser.run {
+                        setMediaItem(item)
+                        prepare()
+                        play()
+                    }
                     actContext.startActivity(
                         Intent(actContext, Media3Activity::class.java)
                     )
