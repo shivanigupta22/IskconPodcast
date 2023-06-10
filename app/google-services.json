@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "687600560273",
+    "project_id": "guruashraya-e2f3e",
+    "storage_bucket": "guruashraya-e2f3e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687600560273:android:feb8544ac0116617837730",
+        "android_client_info": {
+          "package_name": "iskcon.devotees.podcast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687600560273-kra7jqfmp5442g1imu1id08ulnhifk76.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuCJC1FrSnS4PvGzUVugUQHMUX7hsdz54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687600560273-kra7jqfmp5442g1imu1id08ulnhifk76.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

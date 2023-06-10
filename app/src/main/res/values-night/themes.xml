@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
 
     <!--todo: commented temporarily, needs to be handled-->
-    <style name="Theme.IskconPodcast" parent="Theme.MaterialComponents.Light">
+    <style name="Theme.IskconPodcast" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
 <!--        <item name="colorPrimary">@color/purple_200</item>-->
 <!--        <item name="colorPrimaryVariant">@color/purple_700</item>-->

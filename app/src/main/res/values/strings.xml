@@ -1,6 +1,3 @@
 <resources>
-    <string name="app_name">IskconPodcast</string>
-    <string name="media_url_mp3">https://audio.iskcondesiretree.com/01_-_Srila_Prabhupada/02_-_Bhajans/Vol-01/03_-_Songs_of_the_Spiritual_Masters/SP_Bhajans_01_-_Hari_Haraye_Namah_Krsna_-_Nama-sankirtana.mp3</string>
-    <string name="media_url_mp3_2">https://audio.iskcondesiretree.com/01_-_Srila_Prabhupada/02_-_Bhajans/Vol-01/03_-_Songs_of_the_Spiritual_Masters/SP_Bhajans_01_-_Cintamani_-_Sri_Brahma-samhita.mp3</string>
-
+    <string name="app_name">GuruAshraya</string>
 </resources>
