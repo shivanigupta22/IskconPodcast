@@ -3,6 +3,7 @@ package iskcon.devotees.podcast.ui
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
@@ -22,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
@@ -53,8 +55,12 @@ class MainActivity : ComponentActivity() {
             SessionToken(this, ComponentName(this, PlaybackService::class.java))
         ).buildAsync()
 //        browserFuture.addListener({
-//            //  this.browser?.setMediaItems(MediaContent.mediaContentList)
-//        }, MoreExecutors.directExecutor())
+//            this.browser?.setMediaItems(MediaContent.mediaContentList)
+//            Log.e(
+//                "media item",
+//                "${this.browser?.mediaItemCount} --- ${MediaContent.mediaContentList.size}"
+//            )
+//        }, ContextCompat.getMainExecutor(this))
 
     }
 
@@ -106,6 +112,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun DrawList() {
         LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+            /*  TODO fetch items from browser*/
+            Log.e("media item drawlist", MediaContent.mediaContentList.size.toString())
             items(items = MediaContent.mediaContentList) { item ->
                 ListItem(item)
             }

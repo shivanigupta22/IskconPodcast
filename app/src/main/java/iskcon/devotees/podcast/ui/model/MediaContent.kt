@@ -10,6 +10,7 @@ import org.json.JSONObject
 
 object MediaContent {
     val mediaContentList = mutableListOf<MediaItem>()
+    private var isInitialized = false
 
     @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun loadJSONFromAsset(assets: AssetManager): String {
@@ -18,6 +19,8 @@ object MediaContent {
     }
 
     fun initialize(assets: AssetManager) {
+        if (isInitialized) return
+        isInitialized = true
         val jsonObject = JSONObject(loadJSONFromAsset(assets))
         val mediaList = jsonObject.getJSONArray("media")
 

@@ -3,7 +3,6 @@ package iskcon.devotees.podcast.ui.media3
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Intent
-import android.util.Log
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
@@ -63,7 +62,6 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
     ): ListenableFuture<MutableList<MediaItem>> {
         val updatedMediaItems =
             mediaItems.map {
-                Log.e("service ", "${it.requestMetadata.mediaUri}")
                 it.buildUpon().setUri(it.requestMetadata.mediaUri).build()
             }.toMutableList()
         return Futures.immediateFuture(updatedMediaItems)
